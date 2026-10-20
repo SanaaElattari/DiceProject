@@ -39,9 +39,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DiceScreen(modifier: Modifier=Modifier){
     var dieIndex by remember { mutableIntStateOf(5) }
+    //text field / drop down menu from 0 to 4*
+    //var numDice = text field return value
     Dice(dieIndex,
         onRollClick={
-            dieIndex=rollDie()
+            dieIndex=rollDie(numDice) //*
         },
         modifier=modifier
     )
@@ -81,7 +83,7 @@ fun Dice(dieIndex:Int,
 
         modifier = modifier.fillMaxSize(),
 
-// verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.SpaceEvenly,
 
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -119,6 +121,14 @@ fun Dice(dieIndex:Int,
 
         val dieValue=dieIndex+1
 
+        var totalScore
+
+        //if(dieIndex == 0) {
+            totalScore = 0    
+        } else {
+            totalScore += dieIndex+1
+        }
+
         Text("$dieValue",
             fontSize = 32.sp)
 
@@ -126,11 +136,19 @@ fun Dice(dieIndex:Int,
 
 }
 
+//* alter for bias
+fun rollDie(int numDice):Int{
 
-fun rollDie():Int{
+    //val roll=(0..5).random()
 
-    val roll=(0..5).random()
-
+    //for bias
+    if(numDice == 1) {
+        roll = (0..5).random()
+    } else {
+        val diceVal = [1, 1, 1, 2, 3, 4, 5, 6]
+        val i = (0...7).random()
+        roll = diceVal[i]
+    }
     return roll
 
 }
