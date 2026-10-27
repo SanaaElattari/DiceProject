@@ -5,9 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -41,15 +44,92 @@ fun DiceScreen(modifier: Modifier=Modifier){
     var dieIndex by remember { mutableIntStateOf(5) }
     var playerTotal by remember { mutableIntStateOf(0) }
     var botTotal by remember { mutableIntStateOf(0) }
-
-    //text field / drop down menu from 0 to 4*
+    var numDice by remember {mutableIntStateOf(0)}
+    //text field composable/ drop down menu from 0 to 4*
     //var numDice = text field return value
-    Dice(dieIndex,
-        onRollClick={
-            dieIndex=rollDie(numDice) //*
-        },
-        modifier=modifier
-    )
+
+    //while game is still valid
+
+
+        //update numDice value
+
+        //dice composable + make others enabled / valid or not
+        //dice composable is solely visual
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                //Dice #1
+                Dice(
+                    dieIndex,
+                    onRollClick = {
+                        dieIndex = rollDie(numDice) //*
+                        playerTotal += dieIndex
+                    },
+                    modifier = modifier
+                        .size(40.dp)
+                )
+                //Dice #2
+                Dice(
+                    dieIndex,
+                    onRollClick = {
+                        dieIndex = rollDie(numDice) //*
+                        if (numDice > 1) {
+                            playerTotal += dieIndex
+                        }
+                    },
+                    modifier = modifier
+                        .size(40.dp)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                //Dice #3
+                Dice(
+                    dieIndex,
+                    onRollClick = {
+                        dieIndex = rollDie(numDice) //*
+                        if (numDice > 2) {
+                            playerTotal += dieIndex
+                        }
+                    },
+                    modifier = modifier
+                        .size(40.dp)
+                )
+                //Dice #4
+                Dice(
+                    dieIndex,
+                    onRollClick = {
+                        dieIndex = rollDie(numDice) //*
+                        if (numDice >= 3) {
+                            playerTotal += dieIndex
+                        }
+                    },
+                    modifier = modifier
+                        .size(40.dp)
+                )
+            }
+        }
+
+    while(playerTotal <= 50 || botTotal <= 50) {
+
+        botTotal += calculatePlayer2()
+    }
+
+
+
 }
 
 // function for calculating points for each round
@@ -60,15 +140,19 @@ fun calculateRound(diceRolls: List<Int>): Int {
     return diceRolls.sum()
 }
 
+fun calculatePlayer2(): Int {
+    //number of dice to roll
+    val numDice=(1..4).random()
+    val score = rollDie(numDice)
+
+    return score
+}
 
 @Composable
 fun Dice(dieIndex:Int,
          onRollClick: ()->Unit,
          modifier: Modifier= Modifier
 ){
-
-
-
 
 
     val dieArray=remember {
@@ -86,43 +170,24 @@ fun Dice(dieIndex:Int,
 
 
 
-
-
-
-
     Column(
 
         modifier = modifier.fillMaxSize(),
-
         verticalArrangement = Arrangement.SpaceEvenly,
-
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-
-
         Image(
-
             painter= painterResource(id=dieArray[dieIndex]),
-
             contentDescription = "Dice image",
-
             modifier = Modifier
-
                 .size(150.dp)
-
-
-
-
-
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-
-
 
         Button(onClick=onRollClick)
 
@@ -131,10 +196,9 @@ fun Dice(dieIndex:Int,
         Spacer(modifier = Modifier.height(24.dp))
 
         val dieValue=dieIndex+1
+        var totalScore = 0
 
-        var totalScore
-
-        //if(dieIndex == 0) {
+        if(dieIndex == 0) {
             totalScore = 0    
         } else {
             totalScore += dieIndex+1
@@ -148,16 +212,15 @@ fun Dice(dieIndex:Int,
 }
 
 //* alter for bias
-fun rollDie(int numDice):Int{
-
+fun rollDie(numDice: Int): Int {
     //val roll=(0..5).random()
-
+    var roll = 0
     //for bias
     if(numDice == 1) {
         roll = (0..5).random()
     } else {
-        val diceVal = [1, 1, 1, 2, 3, 4, 5, 6]
-        val i = (0...7).random()
+        val diceVal = intArrayOf(1, 1, 1, 2, 3, 4, 5, 6)
+        val i = (0..7).random()
         roll = diceVal[i]
     }
     return roll
