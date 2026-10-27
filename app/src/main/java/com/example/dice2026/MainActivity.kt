@@ -39,6 +39,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DiceScreen(modifier: Modifier=Modifier){
     var dieIndex by remember { mutableIntStateOf(5) }
+    var playerTotal by remember { mutableIntStateOf(0) }
+    var botTotal by remember { mutableIntStateOf(0) }
+
     //text field / drop down menu from 0 to 4*
     //var numDice = text field return value
     Dice(dieIndex,
@@ -47,6 +50,14 @@ fun DiceScreen(modifier: Modifier=Modifier){
         },
         modifier=modifier
     )
+}
+
+// function for calculating points for each round
+fun calculateRound(diceRolls: List<Int>): Int {
+    if (diceRolls.contains(1)) {
+        return 0
+    }
+    return diceRolls.sum()
 }
 
 
